@@ -3,18 +3,107 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package sub.cse;
-
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import javax.swing.*;
+import javazoom.jl.player.Player;
 /**
  *
  * @author User
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class NewJFrame extends javax.swing.JFrame implements Runnable {
+    String sound, title;
+    FileInputStream fileInputStream;
+    BufferedInputStream bufferedInputStream;
+    Player player;
+    long all;
+    String hours, hh, mm, hourAlarm, minuteAlarm, years;
 
     /**
      * Creates new form NewJFrame
      */
     public NewJFrame() {
         initComponents();
+        Thread t = new Thread(this);
+        t.start();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("hh");
+        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("mm");
+        Date date = c.getTime();
+        hh = simpleDateFormat1.format(date);
+        mm = simpleDateFormat2.format(date);
+        jComboBox1.setSelectedItem(hh);
+        jComboBox2.setSelectedItem(mm);
+        jBListen.setEnabled(false);
+    }
+    
+    public void chooseSong(){
+        try {
+            JFileChooser x = new JFileChooser();
+        int a = x.showOpenDialog(null);
+        if(a == JFileChooser.APPROVE_OPTION){
+            File alarmMusic = x.getSelectedFile();
+            sound = alarmMusic.getAbsolutePath();
+            title = x.getSelectedFile().getName();
+            System.out.println(title);
+        }
+        else if(a == JFileChooser.CANCEL_OPTION){
+            JOptionPane.showMessageDialog(null, "You didn't select music.");
+        }
+        }
+        catch (Exception e){
+            JOptionPane.showInternalMessageDialog(null, e);
+        }
+    }
+    
+    public void startAlarm(){
+        try{
+            fileInputStream = new FileInputStream(sound);
+            bufferedInputStream = new BufferedInputStream(fileInputStream);
+            player = new Player(bufferedInputStream);
+            all = fileInputStream.available();
+            new Thread(){
+                public void run(){
+                    try{
+                        player.play();
+                    } catch(Exception e){
+                        
+                    }
+                    
+                }
+            }.start();
+        } catch(Exception e){
+            
+        }
+    }
+    
+    public void alarmTime(final int hour, final int minute){
+        Thread t = new Thread(){
+            public void run(){
+                int time = 0;
+                while(time == 0){
+                    Calendar c = Calendar.getInstance();
+                    int h = c.get(Calendar.HOUR);
+                    int m = c.get(Calendar.MINUTE);
+                    if(hour == h && minute == m){
+                        startAlarm();
+                        JOptionPane.showMessageDialog(null, "ALARM");
+                        int stop = JOptionPane.showConfirmDialog(null, "STOP ALARM", "", JOptionPane.YES_NO_OPTION);
+                        if(stop == JOptionPane.YES_NO_OPTION){
+                            stopAlarm();
+                            break;
+                        }
+                    }
+                }
+            }
+        }; t.start();
+    }
+    
+    public void stopAlarm(){
+        if(player !=null){
+            player.close();
+        }
     }
 
     /**
@@ -26,21 +115,188 @@ public class NewJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jLabel5 = new javax.swing.JLabel();
+        jBRingtoon = new javax.swing.JButton();
+        jBListen = new javax.swing.JButton();
+        jBSetAlarm = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI Black", 1, 36)); // NOI18N
+        jLabel1.setForeground(java.awt.Color.pink);
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Alarm Clock");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("jLabel2");
+        jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel3.setText("HOUR");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
+        jLabel4.setText("MINUTE");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel6.setForeground(java.awt.Color.red);
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("TIMER");
+        jLabel6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" }));
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59" }));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+
+        jBRingtoon.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jBRingtoon.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jBRingtoon.setText("Ringtoon");
+        jBRingtoon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBRingtoonActionPerformed(evt);
+            }
+        });
+
+        jBListen.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jBListen.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jBListen.setText("Listen");
+        jBListen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBListenActionPerformed(evt);
+            }
+        });
+
+        jBSetAlarm.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jBSetAlarm.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jBSetAlarm.setText("Set Alarm");
+        jBSetAlarm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBSetAlarmActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setText("jLabel7");
+        jLabel7.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, java.awt.Color.lightGray, null, null));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(105, 105, 105)
+                        .addComponent(jBRingtoon)
+                        .addGap(6, 6, 6)
+                        .addComponent(jBListen)
+                        .addGap(6, 6, 6)
+                        .addComponent(jBSetAlarm))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(115, 115, 115)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(115, 115, 115)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(4, 4, 4)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(13, 13, 13)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jBRingtoon)
+                    .addComponent(jBListen)
+                    .addComponent(jBSetAlarm))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jBRingtoonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRingtoonActionPerformed
+        // TODO add your handling code here:
+        chooseSong();
+        if(!sound.equals(null)){
+            jLabel5.setText("Alarm Music : "+title);
+        }
+        jBListen.setEnabled(true);
+    }//GEN-LAST:event_jBRingtoonActionPerformed
+
+    private void jBSetAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBSetAlarmActionPerformed
+        // TODO add your handling code here:
+        hourAlarm = jComboBox1.getSelectedItem().toString();
+        minuteAlarm = jComboBox2.getSelectedItem().toString();
+        if(jLabel5.getText() != ""){
+            String alarmClock =hourAlarm + ":"+ minuteAlarm;
+            System.out.println(alarmClock);
+            alarmTime(Integer.valueOf(hourAlarm), Integer.valueOf(minuteAlarm));
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "You don't choose alarm music..","Warning: ", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jBSetAlarmActionPerformed
+
+    private void jBListenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBListenActionPerformed
+        // TODO add your handling code here:
+        if(jBListen.getText().equals("Listen")){
+            startAlarm();
+            jBListen.setText("Stop Sound");
+            jBSetAlarm.setEnabled(false);
+        }
+        else if(jBListen.getText().equals("Stop Sound")){
+            stopAlarm();
+            jBListen.setText("Listen");
+            jBSetAlarm.setEnabled(true);
+        }
+    }//GEN-LAST:event_jBListenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +334,30 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBListen;
+    private javax.swing.JButton jBRingtoon;
+    private javax.swing.JButton jBSetAlarm;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     // End of variables declaration//GEN-END:variables
+
+    public void run(){
+        while(true){
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss ");
+            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("EEE, MMM d, YYYY");
+            Date date = c.getTime();
+            hours = simpleDateFormat.format(date);
+            jLabel2.setText(hours);
+            years = simpleDateFormat1.format(date);
+            jLabel7.setText(years);
+        }
+    }
 }
